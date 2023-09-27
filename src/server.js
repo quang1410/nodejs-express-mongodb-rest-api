@@ -6,7 +6,8 @@
  */
 
 import express from 'express'
-import { CONNECT_DB } from '~/config/mongodb';
+import { CLOSE_DB, CONNECT_DB, GET_DB } from '~/config/mongodb';
+import exitHook from 'async-exit-hook';
 import 'dotenv/config';
 
 
@@ -15,14 +16,24 @@ const START_SERVER = () => {
   const hostname = 'localhost'
   const port = 8017
 
-  app.get('/', (req, res) => {
-    res.end('<h1>Hello World!</h1><hr>')
+  app.get('/', async (req, res) => {
+    console.log('DB', await GET_DB().listCollections().toArray());
+    res.end('<h1>Hello World!</h1><hr>');
   })
 
   app.listen(port, hostname, () => {
     // eslint-disable-next-line no-console
-    console.log(`Hello Ngoc Quang Dev, I am running at ${hostname}:${port}`)
+    console.log(`3. Hello Ngoc Quang Dev, I am running at ${hostname}:${port}`)
   })
+
+
+  //Thực hiện các tác vụ cleanup trước khi dừng server
+  //https://stackoverflow.com/questions/14031763/doing-a-cleanup-action-just-before-node-js-exits
+  exitHook(() => {
+    console.log('4. Disconnecting from MonongoDB Cloud Atlas');
+    CLOSE_DB();
+    console.log('4. Disconnected from MonongoDB Cloud Atlas');
+  });
 };
 
 (async () => {

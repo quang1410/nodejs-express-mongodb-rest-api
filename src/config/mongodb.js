@@ -1,5 +1,5 @@
-const MONGODB_URI = process.env.MONGODB_URI;
-const DATABASE_NAME = process.env.DATABASE_NAME;
+const MONGODB_URI = 'mongodb+srv://admin:W8Tat4DU4AE07Pt3@cluster0.fxllx.mongodb.net/?retryWrites=true&w=majority' || process.env.MONGODB_URI;
+const DATABASE_NAME = 'trello-mern-stack-pro' || process.env.DATABASE_NAME;
 
 import { MongoClient, ServerApiVersion } from 'mongodb';
 
@@ -25,9 +25,15 @@ export const CONNECT_DB = async () => {
   trelloDatabaseInstance = mongoClientInstance.db(DATABASE_NAME);
 };
 
+//Đóng kết nối Database khi cần
+export const CLOSE_DB = async () => {
+  await mongoClientInstance.close();
+}
+
 //Function getDB không async này có nhiệm vụ export ra cái Trello Database Instance sau khi đã connect thành công tới MonongoDB để chúng ta sử dụng ở nhiều nới khác nhau trong code.
 // Lưu ý: Phải đảm bảo chỉ luôn gọi cái getDb này sau khi đã kết nối thành công tới MongoDB
 export const GET_DB = () => {
   if (!trelloDatabaseInstance) throw new Error('Must connect to Database first');
   return trelloDatabaseInstance;
 }
+
