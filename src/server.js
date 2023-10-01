@@ -8,15 +8,16 @@
 import express from 'express'
 import { CLOSE_DB, CONNECT_DB, GET_DB } from '~/config/mongodb';
 import exitHook from 'async-exit-hook';
-import 'dotenv/config';
+import { env } from '~/config/environment'
 
 
 const START_SERVER = () => {
   const app = express()
-  const hostname = 'localhost'
-  const port = 8017
+  const hostname = env.APP_HOST
+  const port = env.APP_PORT
 
   app.get('/', async (req, res) => {
+    console.log('process', process.env.APP_HOST)
     console.log('DB', await GET_DB().listCollections().toArray());
     res.end('<h1>Hello World!</h1><hr>');
   })
